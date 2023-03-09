@@ -41,7 +41,14 @@ public class MangaList extends JFrame {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
+                try {
+                    int index = table.getSelectedRow();
+                    Chapter[] chapters = Api.getChapterList(mangas[index]);
+                    new ChapterList(chapters);
+                    setVisible(false);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(panel, "ERROR: " + ex.getMessage());
+                }
 
             }
         });
