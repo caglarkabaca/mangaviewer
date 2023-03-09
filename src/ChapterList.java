@@ -3,6 +3,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Arrays;
 
 public class ChapterList extends JFrame {
@@ -17,7 +19,33 @@ public class ChapterList extends JFrame {
         setSize(720, 720);
         setVisible(true);
         setTitle("mangaViewer");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {}
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Main.openedFrames.get("mangaList").setVisible(true);
+                Main.openedFrames.remove("chapterList");
+                dispose();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {}
+
+            @Override
+            public void windowIconified(WindowEvent e) {}
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {}
+
+            @Override
+            public void windowActivated(WindowEvent e) {}
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {}
+        });
 
         info.setText(String.format("Found %d chapters", chapters.length));
         String[][] data = new String[chapters.length][6];
@@ -53,7 +81,7 @@ public class ChapterList extends JFrame {
                 try {
                     int index = table.getSelectedRow();
                     String[] urls = Api.getChapterImageUrls(chapters[index]);
-                    new ChapterView(urls);
+                    Main.openedFrames.put("chapterView", new ChapterView(urls));
                     setVisible(false);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(panel, "ERROR: " + ex.getMessage());

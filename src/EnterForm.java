@@ -13,13 +13,14 @@ public class EnterForm extends JFrame {
         setVisible(true);
         setTitle("mangaViewer");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        getRootPane().setDefaultButton(findButton);
 
         findButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     Manga[] mangas = Api.getMangaList(textField1.getText());
-                    new MangaList(mangas);
+                    Main.openedFrames.put("mangaList", new MangaList(mangas));
                     setVisible(false);
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(enterPanel, "ERROR: " + exception.getMessage());

@@ -10,6 +10,7 @@ import java.util.*;
 public final class Api {
 
     static final String baseUrl = "https://api.mangadex.org";
+    static HashMap<String, String> downloadedImages = new HashMap<>();
 
     public static Manga[] getMangaList(String name) throws Exception {
 
@@ -116,16 +117,28 @@ public final class Api {
         return fileUrls.toArray(new String[0]);
     }
 
-    public static String downloadChapter(String[] imageUrls, int index) throws Exception {
+    public static String downloadChapter(String imageUrl) throws Exception {
+
+        if (downloadedImages.containsKey(imageUrl))
+            return downloadedImages.get(imageUrl);
+
         Path temp = Files.createTempFile("imageViewer", ".png");
-        try (BufferedInputStream in = new BufferedInputStream(new URL(imageUrls[index]).openStream());
+        try (BufferedInputStream in = new BufferedInputStream(new URL(imageUrl).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(temp.toFile())) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
+            downloadedImages.put(imageUrl, temp.toString());
             return temp.toString();
+        }
+    }
+
+    public static void clearDownloadedImages() {
+        for (String url: Api.downloadedImages.values()) {
+            if (!(new File(url)).delete())
+                System.out.println("failed to delete " + url);
         }
     }
 
